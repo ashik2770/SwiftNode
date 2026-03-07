@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swiftnode"
+version = "4.0.0"
+description = "Ultra-Light Personal AI Agent with Multi-Device Control, Telegram integration, and 20+ tools"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "SwiftNode Team", email = "ashik2770@github.com" }
+]
+keywords = ["ai", "agent", "telegram", "automation", "multi-device", "llm", "adb", "android"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Home Automation",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pyTelegramBotAPI>=4.14.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "psutil>=5.9.0",
+    "Pillow>=10.0.0",
+    "rich>=13.0.0",
+    "questionary>=2.0.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.0.0",
+    "httpx>=0.25.0",
+    "speedtest-cli>=2.1.3",
+    "pyperclip>=1.8.2",
+    "plyer>=2.1.0",
+    "discord.py>=2.3.0",
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.0",
+]
+
+[project.optional-dependencies]
+android = [
+    # No extra deps needed; ADB tools use subprocess
+]
+youtube = [
+    "youtube-transcript-api>=0.6.2",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+swiftnode = "swiftnode.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ashik2770/SwiftNode"
+Repository = "https://github.com/ashik2770/SwiftNode"
+Issues = "https://github.com/ashik2770/SwiftNode/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["swiftnode*"]
+
+[tool.setuptools.package-data]
+swiftnode = ["*.json", "*.md"]
