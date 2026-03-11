@@ -29,6 +29,9 @@ from swiftnode.tools.network import (
     get_public_ip, ping_host, scan_lan_devices, run_speed_test
 )
 from swiftnode.tools.code import run_python_snippet, lint_code
+from swiftnode.tools.extras import (
+    math_calc, base64_encode, base64_decode, hash_text, get_weather, translate_text
+)
 
 # ── Base tools available on ALL devices ──────────────────────────────────────
 AVAILABLE_TOOLS: dict = {
@@ -55,6 +58,13 @@ AVAILABLE_TOOLS: dict = {
     "run_speed_test": run_speed_test,
     "run_python_snippet": run_python_snippet,
     "lint_code": lint_code,
+    # ── V5 Extras ────────────────────────────────────────────────────────────
+    "math_calc": math_calc,
+    "base64_encode": base64_encode,
+    "base64_decode": base64_decode,
+    "hash_text": hash_text,
+    "get_weather": get_weather,
+    "translate_text": translate_text,
 }
 
 AI_TOOL_SCHEMA: list = [
@@ -217,6 +227,49 @@ AI_TOOL_SCHEMA: list = [
             "name": "lint_code",
             "description": "Check Python code for syntax errors and basic issues.",
             "parameters": {"type": "object", "properties": {"code": {"type": "string"}}, "required": ["code"]}
+        }
+    },
+    # ── V5 Extras ────────────────────────────────────────────────────────
+    {
+        "type": "function", "function": {
+            "name": "math_calc",
+            "description": "Safely evaluate a mathematical expression. Supports +,-,*,/,**,%,sqrt,sin,cos,log,abs,round.",
+            "parameters": {"type": "object", "properties": {"expression": {"type": "string", "description": "Math expression, e.g. '2 ** 10' or 'sqrt(144)'"}}, "required": ["expression"]}
+        }
+    },
+    {
+        "type": "function", "function": {
+            "name": "base64_encode",
+            "description": "Encode a text string to Base64.",
+            "parameters": {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"]}
+        }
+    },
+    {
+        "type": "function", "function": {
+            "name": "base64_decode",
+            "description": "Decode a Base64 encoded string back to plain text.",
+            "parameters": {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"]}
+        }
+    },
+    {
+        "type": "function", "function": {
+            "name": "hash_text",
+            "description": "Generate a hash digest (md5, sha1, sha256, sha512) of the given text.",
+            "parameters": {"type": "object", "properties": {"text": {"type": "string"}, "algorithm": {"type": "string", "description": "Hash algorithm: md5 | sha1 | sha256 | sha512", "default": "sha256"}}, "required": ["text"]}
+        }
+    },
+    {
+        "type": "function", "function": {
+            "name": "get_weather",
+            "description": "Get current weather for any city. Returns temperature, condition, humidity, wind speed.",
+            "parameters": {"type": "object", "properties": {"city": {"type": "string", "description": "City name, e.g. 'Dhaka' or 'London'"}}, "required": ["city"]}
+        }
+    },
+    {
+        "type": "function", "function": {
+            "name": "translate_text",
+            "description": "Translate text to a target language. target_lang is an ISO 639-1 code: 'bn' (Bangla), 'en', 'fr', 'es', 'ar', 'zh', etc.",
+            "parameters": {"type": "object", "properties": {"text": {"type": "string"}, "target_lang": {"type": "string", "description": "ISO 639-1 target language code", "default": "en"}}, "required": ["text"]}
         }
     },
 ]

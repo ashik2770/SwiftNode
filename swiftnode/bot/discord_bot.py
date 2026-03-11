@@ -8,13 +8,14 @@ from discord.ext import commands
 import asyncio
 from rich.console import Console
 from swiftnode.config import load_config
-from swiftnode.core.agent import execute_agent_step
+from swiftnode.core.agent import SwiftNodeCore
 
 console = Console()
 
 class SwiftNodeDiscordBot(discord.Client):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, agent, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.agent = agent
 
     async def on_ready(self):
         console.print(f"[bold green]✅ Discord Bot Logged in as {self.user} (ID: {self.user.id})[/]")
@@ -35,7 +36,7 @@ class SwiftNodeDiscordBot(discord.Client):
             async with message.channel.typing():
                 try:
                     # Very simple synchronous call blocking logic - in real world use executor
-                    response_text, state = await asyncio.to_thread(execute_agent_step, user_text, None)
+                    response_text = await asyncio.to_thread(self.agent.process_query, user_text)
                     
                     # Discord has a 2000 char cap per message
                     chunks = [response_text[i:i+1950] for i in range(0, len(response_text), 1950)]
@@ -58,7 +59,8 @@ def run_discord_bot():
     intents = discord.Intents.default()
     intents.message_content = True
     
-    client = SwiftNodeDiscordBot(intents=intents)
+    agent = SwiftNodeCore(config)
+    client = SwiftNodeDiscordBot(agent=agent, intents=intents)
     try:
         client.run(token, log_handler=None) # Use our rich console instead
     except discord.LoginFailure:

@@ -33,7 +33,7 @@ def _show_welcome():
     console.print(Panel(
         Align.center(
             ASCII_LOGO + "\n\n"
-            "[dim cyan]V4 ULTRA  ·  Personal AI Agent  ·  Multi-Device Control[/dim cyan]"
+            "[dim cyan]V5 ULTRA  ·  Personal AI Agent  ·  100+ LLM Providers  ·  30+ Tools[/dim cyan]"
         ),
         border_style="cyan",
         padding=(1, 2)
@@ -165,6 +165,9 @@ def cmd_tools(args):
         "adb_shell": "📱 ADB", "adb_tap": "📱 ADB", "adb_swipe": "📱 ADB",
         "adb_type_text": "📱 ADB", "adb_install_apk": "📱 ADB",
         "adb_screenshot": "📱 ADB", "adb_list_devices": "📱 ADB", "adb_screen_record": "📱 ADB",
+        # V5 Extras
+        "math_calc": "🔢 Extras", "base64_encode": "🔢 Extras", "base64_decode": "🔢 Extras",
+        "hash_text": "🔢 Extras", "get_weather": "🌤 Extras", "translate_text": "🌐 Extras",
     }
     
     for i, name in enumerate(sorted(AVAILABLE_TOOLS.keys()), 1):
@@ -193,18 +196,100 @@ def cmd_version(args):
     ))
 
 
+def cmd_chat(args):
+    """Start an interactive terminal chat session (no Telegram required)."""
+    from swiftnode.config import config_exists, load_config
+    from swiftnode.ui.setup import run_setup
+    from swiftnode.core.agent import SwiftNodeCore
+    import readline  # noqa: F401 — enables arrow-key history on Linux/macOS
+
+    if not config_exists():
+        console.print("[yellow]⚠️  No config found. Running setup wizard...[/]")
+        run_setup()
+
+    config = load_config()
+    try:
+        agent = SwiftNodeCore(config)
+    except Exception as e:
+        console.print(f"[bold red]❌ Agent init failed: {e}[/]")
+        sys.exit(1)
+
+    from swiftnode.tools import DEVICE_OS
+    console.print(Panel(
+        f"[bold green]SwiftNode V5 Terminal Chat[/bold green]\n"
+        f"[dim]Provider: {config.get('provider')} | Model: {config.get('model')}[/dim]\n"
+        f"[dim]Tools: {len(agent.available_tools)} active on {DEVICE_OS}[/dim]\n"
+        "[dim]Type [bold]/clear[/bold] to reset memory, [bold]/exit[/bold] or Ctrl+C to quit.[/dim]",
+        border_style="green",
+        title="[bold cyan]💬 Chat Mode[/]"
+    ))
+
+    while True:
+        try:
+            user_input = console.input("[bold cyan]You:[/bold cyan] ").strip()
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n[dim]Goodbye! 👋[/dim]")
+            break
+
+        if not user_input:
+            continue
+        if user_input.lower() in ("/exit", "exit", "quit"):
+            console.print("[dim]Session ended. Goodbye! 👋[/dim]")
+            break
+        if user_input.lower() == "/clear":
+            agent.memory.clear_history()
+            console.print("[yellow]🧹 Memory cleared.[/yellow]")
+            continue
+
+        try:
+            console.print("[dim]🤔 Thinking...[/dim]")
+            reply = agent.process_query(user_input)
+            console.print(f"[bold green]🤖 SwiftNode:[/bold green] {reply}\n")
+        except KeyboardInterrupt:
+            console.print("\n[yellow]⚠️  Interrupted.[/yellow]")
+        except Exception as e:
+            console.print(f"[bold red]❌ Error: {e}[/bold red]\n")
+
+
+def cmd_update(args):
+    """Self-update SwiftNode via pip."""
+    import subprocess
+    console.print(Panel(
+        "[bold cyan]🔄 Updating SwiftNode to latest version...[/bold cyan]\n"
+        "[dim]Running: pip install --upgrade swiftnode[/dim]",
+        border_style="cyan"
+    ))
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--upgrade", "swiftnode"],
+            capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            console.print("[bold green]✅ SwiftNode updated successfully![/bold green]")
+            # Show new version
+            out_lines = result.stdout.strip().splitlines()
+            for line in out_lines[-5:]:
+                console.print(f"[dim]{line}[/dim]")
+        else:
+            console.print(f"[bold red]❌ Update failed:[/bold red]\n{result.stderr[:500]}")
+    except Exception as e:
+        console.print(f"[bold red]❌ Update error: {e}[/bold red]")
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="swiftnode",
-        description="⚡ SwiftNode V4 ULTRA — Personal AI Agent",
+        description="⚡ SwiftNode V5 ULTRA — Personal AI Agent",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "Examples:\n"
             "  swiftnode config               # First-time setup or reconfigure\n"
-            "  swiftnode run                  # Start the Telegram bot\n"
+            "  swiftnode run                  # Start the bot (Telegram/Discord/WhatsApp)\n"
+            "  swiftnode chat                 # Interactive terminal chat (no Telegram)\n"
             "  swiftnode serve                # Start multi-device server\n"
             "  swiftnode connect 192.168.1.5  # Connect to master device\n"
             "  swiftnode tools                # List all available tools\n"
+            "  swiftnode update               # Update SwiftNode to latest version\n"
         )
     )
     
@@ -236,6 +321,14 @@ def main():
     # tools
     sp_tools = subparsers.add_parser("tools", help="🔧 List all available tools")
     sp_tools.set_defaults(func=cmd_tools)
+
+    # chat
+    sp_chat = subparsers.add_parser("chat", help="💬 Interactive terminal chat (no Telegram needed)")
+    sp_chat.set_defaults(func=cmd_chat)
+
+    # update
+    sp_update = subparsers.add_parser("update", help="🔄 Update SwiftNode to the latest version")
+    sp_update.set_defaults(func=cmd_update)
 
     # version
     sp_ver = subparsers.add_parser("version", help="ℹ️  Show version information")

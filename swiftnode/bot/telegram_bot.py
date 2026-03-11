@@ -24,7 +24,16 @@ def run_bot():
     try:
         agent = SwiftNodeCore(config)
         bot = telebot.TeleBot(config["telegram_token"])
+        # Validate token immediately
+        bot.get_me()
         owner_id = str(config.get("owner_id", ""))
+    except telebot.apihelper.ApiTelegramException as e:
+        if "Unauthorized" in str(e) or e.error_code == 401:
+            console.print("[bold red]❌ Telegram API Error: Unauthorized (Invalid Token)[/]")
+            console.print("[dim]Please run `swiftnode config` to enter a valid Telegram bot token.[/dim]")
+            return
+        console.print(f"[bold red]❌ Telegram API Error:[/] {e}")
+        return
     except Exception as e:
         console.print(f"[bold red]❌ Initialization Error:[/] {e}")
         return

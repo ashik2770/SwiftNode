@@ -1,4 +1,7 @@
-# Core dependencies
+# Core dependencies — SwiftNode v5.0.0
+# AI Engine (100+ LLM providers)
+litellm>=1.40.0
+pydantic-settings>=2.0.0
 pyTelegramBotAPI>=4.14.0
 requests>=2.31.0
 beautifulsoup4>=4.12.0

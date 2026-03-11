@@ -7,13 +7,14 @@ Automates WhatsApp Web to read and reply to messages.
 import time
 from rich.console import Console
 from swiftnode.config import load_config
-from swiftnode.core.agent import execute_agent_step
+from swiftnode.core.agent import SwiftNodeCore
 
 console = Console()
 
 def run_whatsapp_bot():
     """Starts the WhatsApp Web automation bot."""
     config = load_config()
+    agent = SwiftNodeCore(config)
     
     try:
         from selenium import webdriver
@@ -81,7 +82,7 @@ def run_whatsapp_bot():
                     console.print(f"[cyan]Received:[/] {last_msg_text}")
                     
                     # Process with SwiftNode
-                    response_text, state = execute_agent_step(last_msg_text, None)
+                    response_text = agent.process_query(last_msg_text)
                     
                     # Type response
                     message_box = driver.find_element(By.XPATH, "//div[@contenteditable='true'][@data-tab='10']")

@@ -1,4 +1,4 @@
-# SwiftNode ⚡
+# SwiftNode V5 ⚡
 
 <div align="center">
 
@@ -6,11 +6,11 @@
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android%20(Termux)-lightgrey)
 
-**An autonomous, pip-installable AI personal agent with multi-device control, Discord/Telegram/WhatsApp integration, long-term RAG memory, and 23+ powerful tools.**
+**An autonomous, pip-installable AI personal agent powered by Litellm (100+ providers), with interactive terminal chat, Discord/Telegram/WhatsApp integration, multi-device control, long-term RAG memory, and 30+ powerful tools.**
 
-[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Documentation](#-cli-commands) • [Contributing](#-contributing)
+[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [CLI Commands](#%EF%B8%8F-cli-commands) • [Contributing](#-contributing)
 
 </div>
 
@@ -18,9 +18,9 @@
 
 ## 📖 Overview
 
-**SwiftNode** is a cutting-edge personal computing intelligence framework. It acts as your localized AI assistant capable of automating your daily workflow across multiple devices. With out-of-the-box support for leading LLMs, memory persistence, and deep OS-level integration, SwiftNode scales from a simple CLI chatbot to a comprehensive multi-node automation network.
+**SwiftNode V5** is a cutting-edge personal computing intelligence framework. It acts as your localized AI assistant capable of automating your daily workflow across multiple devices. Powered by `litellm`, it seamlessly integrates with 100+ AI providers. SwiftNode scales from a simple CLI terminal chat to a comprehensive multi-node automation network.
 
-**Topics/Tags:** `ai-agent` `automation` `llm` `multi-device` `telegram-bot` `discord-bot` `whatsapp-bot` `rag` `python`
+**Topics/Tags:** `ai-agent` `automation` `llm` `multi-device` `telegram-bot` `discord-bot` `whatsapp-bot` `rag` `python` `termux`
 
 ---
 
@@ -28,15 +28,17 @@
 
 | Category | Capabilities |
 |----------|--------------|
-| 🤖 **Bot Integrations** | Seamless connections with **Telegram**, **Discord**, and **WhatsApp** (Selenium QR Auth). |
-| 🌐 **Web Research** | DuckDuckGo search, URL fetch, Wikipedia, Top News, YouTube transcript extraction. |
-| 💻 **System Control** | CPU/RAM/Disk polling, Screenshots, Subprocess management, Process termination. |
-| 📋 **Clipboard & OS** | Read & Write clipboard, Desktop push notifications, file zipping and management. |
-| 🌍 **Network Ops** | Public IP retrieval, ICMP Ping, LAN device scanner, Bandwidth speed tests. |
-| 🐍 **Code Execution** | Secure execution of Python snippets, automated Linting and syntax validation. |
-| 📱 **Android via ADB** | Tap, Swipe, Type, APK Install, Screenshots, Screen Recording, internal Shell access. |
-| 🧠 **Persistent Memory** | Long-term RAG vector memory backed by Google Embeddings and SQLite. |
-| 🔗 **Multi-Device Grid** | HTTP API to control any connected worker node across your Local Area Network. |
+| 🧠 **AI Engine** | Powered by `litellm` — supports 100+ providers (OpenAI, Anthropic, Gemini, Groq, DeepSeek, local models, etc.) |
+| 💬 **Terminal Chat** | Interactive, rich terminal chat mode directly from CLI without needing a bot platform. |
+| 🤖 **Bot Integrations**| Seamless connections with **Telegram**, **Discord**, and **WhatsApp** (Selenium QR Auth). |
+| 🌐 **Web Research**| DuckDuckGo search, URL fetch, Wikipedia, Top News, YouTube transcript extraction. |
+| 💻 **System Control**| CPU/RAM/Disk polling, Screenshots, Subprocess management, Process termination. |
+| 📦 **Files & Folders** | Read/write files, Desktop push notifications, file zipping and management. |
+| 🌍 **Network Tasks** | Public IP retrieval, ICMP Ping, LAN device scanner, Bandwidth speed tests, real-time Weather. |
+| 🐍 **Code & Math**| Secure execution of Python snippets, automated Linting, safe Math evaluation, Base64 encode/decode, hashing. |
+| 📱 **Android / Termux**| Native support for Android (Termux) + ADB control (Tap, Swipe, Type, APK Install, Screenshots, Screen Recording). |
+| 💾 **Persistent Memory**| Long-term RAG vector memory backed by Google Embeddings and SQLite. |
+| 🔗 **Multi-Device Grid**| HTTP API to control any connected worker node across your Local Area Network. |
 
 ---
 
@@ -44,14 +46,26 @@
 
 ### Prerequisites
 - Python 3.9+
-- Chrome/ChromeDriver (for WhatsApp Bot functionality)
+- For Windows/macOS/Linux standard installation
+- For Android: Install [Termux](https://termux.dev/en/)
 
-### Install via Source (Development/Current)
+### Install via pip (Recommended)
+```bash
+pip install swiftnode
+```
 
+### Install via Source (Development)
 ```bash
 git clone https://github.com/ashik2770/SwiftNode.git
 cd SwiftNode
 pip install -e .
+```
+
+### Install on Termux (Android)
+```bash
+git clone https://github.com/ashik2770/SwiftNode.git
+cd SwiftNode
+./install.sh
 ```
 
 ---
@@ -60,7 +74,7 @@ pip install -e .
 
 ### 1. Initial Configuration
 
-Run the automated setup wizard to link your LLM Provider, configure your bot platform, and set up your multi-device network.
+Run the automated setup wizard to link your preferred LLM Provider (via litellm), configure your bot platform, and set up your multi-device network.
 
 ```bash
 swiftnode config
@@ -69,13 +83,15 @@ swiftnode config
 ### 2. Start Your Agent
 
 ```bash
-# Starts the default bot platform specified during config
+# Start an interactive terminal chat (No bot setup required!)
+swiftnode chat
+
+# Start the messaging bot (Telegram/Discord/WhatsApp configured in setup)
 swiftnode run 
 
-# Or explicitly start a specific platform
+# Explicitly start a specific bot platform
 swiftnode run --bot telegram
 swiftnode run --bot discord
-swiftnode run --bot whatsapp
 ```
 
 ---
@@ -84,12 +100,14 @@ swiftnode run --bot whatsapp
 
 | Command | Description |
 |---------|-------------|
+| `swiftnode chat` | 💬 Start interactive terminal chat session |
 | `swiftnode run` | 🚀 Start the default messaging bot |
 | `swiftnode run --bot <name>` | 🌐 Start a specific bot (telegram/discord/whatsapp) |
 | `swiftnode config` | ⚙️ Setup or reconfigure your environment |
 | `swiftnode serve` | 🌐 Start multi-device HTTP server node |
-| `swiftnode connect <ip:port>` | 📡 Connect to a remote SwiftNode device |
-| `swiftnode tools` | 🔧 List all active system tools |
+| `swiftnode connect <ip>` | 📡 Connect to a remote SwiftNode master device |
+| `swiftnode tools` | 🔧 List all active context tools |
+| `swiftnode update` | 🔄 Update SwiftNode via pip |
 | `swiftnode version` | ℹ️ Show version and system diagnostics |
 
 ---
@@ -106,31 +124,9 @@ swiftnode serve
 
 **2. Form the Grid (Client)**
 ```bash
-swiftnode connect 192.168.1.100:7799
-# Interactive REPL connected directly to the remote agent
+swiftnode connect 192.168.1.100
+# Connects directly to the remote agent
 ```
-
----
-
-## 🧠 Supported AI Engine Providers
-
-SwiftNode is model-agnostic and seamlessly connects to:
-- **Gemini** (Google API) ✅ *Default Recommended*
-- **OpenAI** (GPT-4o, o1)
-- **Grok** (xAI)
-- **Hugging Face** (Serverless Inference API)
-- **OpenRouter** (Unified API for Claude, Mistral, etc.)
-- **Ollama** (Local execution, absolute privacy)
-- **vLLM** (Self-hosted high-performance execution)
-
----
-
-## 🛡️ Security Posture
-
-- **Owner Authorization** — Hardware and bot requests are strictly tied to configured `owner_id`.
-- **System Guardrails** — RegEx and path validation prevent OS-level catastrophic deletion.
-- **Secret Token Auth** — Multi-device nodes authenticate using encrypted preshared tokens.
-- **Local Vectors** — Search and embedding memory stays local using SQLite.
 
 ---
 
@@ -147,7 +143,7 @@ We welcome contributions! Please review our [Contribution Guidelines](CONTRIBUTI
 
 ## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
 <div align="center">
